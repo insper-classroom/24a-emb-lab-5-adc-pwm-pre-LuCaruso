@@ -25,17 +25,28 @@ void data_task(void *p) {
 
 void process_task(void *p) {
     int data = 0;
+    int soma = 0;
+    int v[5] = {0}; // Array para armazenar os últimos 5 valore
 
     while (true) {
         if (xQueueReceive(xQueueData, &data, 100)) {
-            // implementar filtro aqui!
+            // Adiciona o novo dado ao array e remove o mais antigo, mantendo uma janela de 5 valores
+            soma -= v[0];
+            soma += data;
+            for (int i = 0; i < 4; i++) {
+                v[i] = v[i+1];
+            }
+            v[4] = data;
 
+            // Calcula a média móvel
+            int media_movel = soma / 5;
 
-
-
-            // deixar esse delay!
-            vTaskDelay(pdMS_TO_TICKS(50));
+            // Imprime o dado filtrado na UART
+            printf("Dado filtrado: %d\n", media_movel);
         }
+
+        // Deixar esse delay
+        vTaskDelay(pdMS_TO_TICKS(50));
     }
 }
 
